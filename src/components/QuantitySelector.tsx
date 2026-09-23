@@ -19,11 +19,18 @@ export default function QuantitySelector({
 }: QuantitySelectorProps) {
   const dense = size === "sm";
 
+  // The `md` selector grows to 56px with a softer radius on phones so it sits
+  // level with the Satın Al button; from `sm` up it keeps its desktop sizing.
+  const shell = dense ? "h-11 rounded-md" : "h-14 rounded-[10px] sm:h-13 sm:rounded-md";
+  const step = dense ? "w-10" : "w-12";
+  const stepLeft = dense ? "rounded-l-md" : "rounded-l-[10px] sm:rounded-l-md";
+  const stepRight = dense ? "rounded-r-md" : "rounded-r-[10px] sm:rounded-r-md";
+
   return (
     <div
       className={cx(
-        "inline-flex items-center rounded-md border border-line bg-white",
-        dense ? "h-11" : "h-13",
+        "inline-flex items-center border border-line bg-white",
+        shell,
         className,
       )}
     >
@@ -33,8 +40,9 @@ export default function QuantitySelector({
         disabled={value <= 1}
         aria-label="Adedi azalt"
         className={cx(
-          "flex h-full items-center justify-center rounded-l-md text-ink transition-colors hover:bg-mist disabled:cursor-not-allowed disabled:text-ink/30 disabled:hover:bg-transparent",
-          dense ? "w-10" : "w-12",
+          "flex h-full items-center justify-center text-ink transition-colors hover:bg-mist disabled:cursor-not-allowed disabled:text-ink/30 disabled:hover:bg-transparent",
+          step,
+          stepLeft,
         )}
       >
         <Minus className="size-4" aria-hidden="true" />
@@ -43,7 +51,7 @@ export default function QuantitySelector({
       <output
         aria-live="polite"
         className={cx(
-          "text-center font-medium tabular-nums",
+          "flex h-full items-center justify-center font-medium tabular-nums",
           dense ? "w-9 text-[0.95rem]" : "w-12 text-base",
         )}
       >
@@ -56,8 +64,9 @@ export default function QuantitySelector({
         disabled={value >= MAX_QUANTITY}
         aria-label="Adedi artır"
         className={cx(
-          "flex h-full items-center justify-center rounded-r-md text-ink transition-colors hover:bg-mist disabled:cursor-not-allowed disabled:text-ink/30 disabled:hover:bg-transparent",
-          dense ? "w-10" : "w-12",
+          "flex h-full items-center justify-center text-ink transition-colors hover:bg-mist disabled:cursor-not-allowed disabled:text-ink/30 disabled:hover:bg-transparent",
+          step,
+          stepRight,
         )}
       >
         <Plus className="size-4" aria-hidden="true" />

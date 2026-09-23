@@ -16,22 +16,24 @@ export default function ProductPurchase() {
         {product.price}
       </p>
 
-      <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+      {/* Side by side from 360px up; stacked below that, where the two
+          controls stop fitting comfortably on one row. */}
+      <div className="xs:flex-row xs:items-center mt-7 flex flex-col gap-3 sm:gap-4">
         <QuantitySelector
           value={quantity}
           onChange={setQuantity}
-          className="self-start sm:self-auto"
+          className="xs:self-auto shrink-0 self-start"
         />
         <button
           type="button"
           onClick={() => router.push(`/satin-al?quantity=${quantity}`)}
-          className="h-13 flex-1 rounded-md bg-moss px-8 text-base font-medium text-white transition-colors hover:bg-moss-dark"
+          className="xs:w-auto xs:flex-1 flex min-h-14 w-full items-center justify-center rounded-[10px] bg-moss px-6 text-[1.125rem] font-semibold text-white transition-colors hover:bg-moss-dark sm:min-h-13 sm:rounded-md sm:px-8 sm:text-base sm:font-medium"
         >
           Satın Al
         </button>
       </div>
 
-      <p className="mt-3.5 text-[0.85rem] text-bark">
+      <p className="mt-4 text-[0.85rem] text-bark sm:mt-3.5">
         1 Adet = {product.volume}
       </p>
     </div>
