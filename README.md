@@ -55,13 +55,18 @@ src/
   components/           Paylaşılan arayüz bileşenleri
   lib/
     products.ts         Ürün verisi ve tipleri — tek kaynak
-    gallery.ts          Galeri içerik dizisi (görsel + video)
+    gallery.ts          Galeri verisi (ÜRETİLEN — betikle yenilenir)
     site.ts             Site geneli ayarlar, kargo, fiyat biçimlendirme
     cx.ts               className birleştirme yardımcısı
-public/images/
-  brand/                Logo, amblem, kırsal görsel
-  hero/                 Hero arka planı
-  products/             TORFADA ambalaj görselleri (ürün başına klasör)
+public/
+  images/
+    brand/              Logo, amblem, kırsal görsel
+    hero/               Hero arka planı
+    products/           TORFADA ambalaj görselleri (ürün başına klasör)
+  media/
+    gallery/            Instagram'dan indirilen galeri medyası (yerel)
+scripts/
+  import-instagram-gallery.mjs   Galeri medyasını indirir, gallery.ts üretir
 ```
 
 ### Ürün bileşenleri
@@ -75,7 +80,7 @@ Her iki ürün de aynı bileşenlerden render edilir; JSX kopyalanmaz.
 | `ProductImage` | Görsel yuvası; görsel yoksa yer tutucu gösterir |
 | `ProductFeatures` | Özellik ızgarası |
 | `ProductPurchase` | Fiyat, adet seçici ve Satın Al düğmesi |
-| `Gallery` | `galleryItems` dizisinden beslenen galeri |
+| `Gallery` / `GalleryCard` | `galleryItems` dizisinden beslenen galeri |
 
 ## Tasarım sistemi
 
@@ -129,14 +134,33 @@ Kargo `src/lib/site.ts` içinde: `SHIPPING_COST = 0` ve `SHIPPING_LABEL = "Ücre
 
 ## Galeri
 
-`/urunler` sayfasının altındaki galeri `src/lib/gallery.ts` içindeki `galleryItems` dizisinden beslenir ve hem görsel hem video destekler:
+`/urunler` sayfasının altındaki galeri, Sakarya Torf Instagram hesabından seçilmiş **8 gönderiden** oluşur (5 görsel, 3 video). Gönderiler elle seçilmiştir; otomatik senkronizasyon yoktur.
 
-```ts
-{ type: "image", src: "/images/gallery/saksi.jpg", alt: "Saksı dolumu" }
-{ type: "video", src: "/videos/gallery/uretim.mp4", title: "Üretim", poster: "…" }
+**Instagram gömme kullanılmaz ve çalışma anında Instagram CDN'ine istek atılmaz.** Tüm medya `public/media/gallery/` altından, kendi sunucumuzdan servis edilir — Instagram CDN adresleri imzalıdır ve süresi dolar.
+
+### İçeriği yenilemek
+
+Kaynak veri, proje kökündeki `sakarya-torf-instagram-gallery.json` dosyasıdır (Apify dışa aktarımı). `public/` altında olmadığı için tarayıcıya servis edilmez.
+
+```bash
+node scripts/import-instagram-gallery.mjs          # eksik dosyaları indirir
+node scripts/import-instagram-gallery.mjs --force  # hepsini yeniden indirir
 ```
 
-Dizi şu an **bilinçli olarak boştur** — stok fotoğraf eklenmedi. Boşken bölüm "Yakında" yer tutucu çerçeveleri gösterir; ilk öğe eklendiğinde otomatik olarak ızgaraya geçer.
+Betik her varlığı indirir, sihirli baytlarından doğrular (HTML hata sayfası veya bozuk dosya diske yazılmaz) ve `src/lib/gallery.ts` dosyasını **yeniden üretir**. Tekrar çalıştırmak güvenlidir: geçerli dosyalar atlanır. Herhangi bir indirme başarısız olursa veri dosyası yazılmaz ve hangi shortcode'un başarısız olduğu bildirilir.
+
+`src/lib/gallery.ts` üretilen bir dosyadır — elle düzenlemeyin.
+
+Dosya adları Instagram shortcode'udur: `<shortCode>.jpg`, video için `<shortCode>.mp4` + `<shortCode>-cover.jpg`.
+
+### Veri ve davranış
+
+Alt yazılar JSON'dan **birebir** aktarılır; emoji, hashtag, telefon numarası, satır sonları ve Türkçe karakterler korunur. `likesCount`, `commentsCount`, `ownerId` gibi alanlar frontend verisine taşınmaz.
+
+- Medya alanı her kartta `aspect-[4/5]` ve `object-contain` — gönderilerin en boy oranları 0,56 ile 1,88 arasında değişiyor, hiçbiri kırpılmıyor.
+- Alt yazılar 4 satırda `line-clamp` ile kesilir; taşma varsa **Devamını Oku** / **Daha Az Göster** düğmesi çıkar (taşma istemcide ölçülür, kısa alt yazılarda düğme görünmez).
+- Videolar `controls` + `playsInline` + `preload="metadata"` ile gelir; otomatik oynatma yoktur. MP4'lerde `moov` atomu `mdat`'tan önce (faststart), yani baştan indirilmeden oynamaya başlar.
+- Galeri sayfanın altında olduğu için görseller `priority` almaz, tembel yüklenir.
 
 ## Marka görselleri
 
@@ -153,7 +177,6 @@ Header ve footer'da **amblem** kullanılır, tam logo değil: tam logodaki "DOĞ
 Bunlar bilinçli olarak sonraki aşamalara bırakıldı:
 
 - **20 Litre ürünün fiyatı ve ambalaj görseli** — veri modelinde `null`, eklendiğinde kendiliğinden devreye girer
-- **Galeri içeriği** — `galleryItems` boş
 - Ziraat Bankası Sanal POS ve kredi kartı alanları — "Güvenli Ödemeye Devam Et" şu an sayfa içi bir yer tutucu adıma geçer
 - Veritabanı ve sipariş kayıtları
 - E-posta gönderimi (sipariş onayı, firma bildirimi, iletişim formu) — formlar yalnızca istemci tarafında çalışır
