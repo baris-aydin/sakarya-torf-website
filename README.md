@@ -61,7 +61,7 @@ src/
 public/images/
   brand/                Logo, amblem, kırsal görsel
   hero/                 Hero arka planı
-  product/              TORFADA ambalaj görselleri
+  products/             TORFADA ambalaj görselleri (ürün başına klasör)
 ```
 
 ### Ürün bileşenleri
@@ -103,18 +103,23 @@ Bölüm üstü küçük etiketler için `.eyebrow` sınıfı kullanılır. Bu me
 Ürünler `src/lib/products.ts` içindeki tek dizide tanımlıdır. `id` alanı hem `/urunler` üzerindeki çapa hem de ödeme sayfasındaki `?product=` parametresidir — 40 L ve 20 L ayrı SKU olarak işlenir.
 
 ```ts
-{ id: "40-litre", size: "40 Litre", price: 250,  image: "/images/product/torfada-super-mix.png", … }
-{ id: "20-litre", size: "20 Litre", price: null, image: null, … }
+{ id: "40-litre", size: "40 Litre", price: 250,  image: ".../torfada-super-mix-40l.jpg", … }
+{ id: "20-litre", size: "20 Litre", price: null, image: ".../torfada-super-mix-20l.png", … }
 ```
 
-`price: null` ve `image: null` "henüz verilmedi" anlamına gelir; uydurma fiyat veya görsel eklenmez. Bu durumda:
+Ürün görselleri `public/images/products/torfada-super-mix/` altındadır ve yalnızca bu dosyadan referans verilir; hiçbir bileşen görsel yolunu kendi içinde tutmaz.
+
+`price: null` "henüz verilmedi" anlamına gelir; uydurma fiyat eklenmez. Bu durumda:
 
 - fiyat alanında **Fiyat yakında** yazar,
 - adet seçici ve Satın Al düğmesi devre dışı kalır, iletişim bağlantısı gösterilir,
-- görsel yuvası yer tutucu gösterir,
 - `/satin-al?product=20-litre` isteği fiyatı tanımlı ilk ürüne düşer.
 
-**20 L fiyatı geldiğinde tek yapılacak `price: null` yerine sayıyı yazmaktır**; düzen değişmeden tüm kontroller açılır. Görsel için de dosyayı `public/images/product/` altına koyup `image` yolunu yazmak yeterlidir.
+**20 L fiyatı geldiğinde tek yapılacak `price: null` yerine sayıyı yazmaktır**; düzen değişmeden tüm kontroller açılır.
+
+`image: null` da desteklenir; görseli olmayan bir ürün için yuva yer tutucu gösterir.
+
+Ambalaj fotoğrafları `object-contain` ile gösterilir — paketin hiçbir kısmı kırpılmaz. Torbalar beyaz zeminli olduğu için çerçeve soluk yeşil (`bg-mist`) kalır; bu ayrım olmadan beyaz ambalaj krem sayfa zeminine karışır.
 
 Kargo `src/lib/site.ts` içinde: `SHIPPING_COST = 0` ve `SHIPPING_LABEL = "Ücretsiz"`. `OrderSummary` ara toplamı `ürün fiyatı × adet` olarak hesaplar; toplam ara toplama eşittir.
 

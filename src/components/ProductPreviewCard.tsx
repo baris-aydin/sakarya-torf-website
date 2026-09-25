@@ -22,7 +22,9 @@ export default function ProductPreviewCard({
         product={product}
         sizes="(min-width: 1024px) 45vw, 92vw"
         priority={priority}
-        className="aspect-[4/3] border-b border-line"
+        /* Square rather than landscape: the packaging shots are 3:4 portrait,
+           and `object-contain` in a wide frame would shrink the bag. */
+        className="aspect-square border-b border-line"
       />
 
       <div className="flex flex-1 flex-col p-6 sm:p-7">

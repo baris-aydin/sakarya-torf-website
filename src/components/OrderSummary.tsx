@@ -32,7 +32,7 @@ export default function OrderSummary({
               alt={item.imageAlt}
               fill
               sizes="80px"
-              className="object-cover object-center"
+              className="object-contain object-center p-1.5"
             />
           ) : (
             <span

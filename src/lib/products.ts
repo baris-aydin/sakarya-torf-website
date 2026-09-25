@@ -70,9 +70,8 @@ export const products: Product[] = [
     size: "40 Litre",
     liters: 40,
     price: 250,
-    image: "/images/product/torfada-super-mix.png",
-    imageAlt:
-      "TORFADA Super Mix 40 litre genel kullanım bitki toprağı ambalajı",
+    image: "/images/products/torfada-super-mix/torfada-super-mix-40l.jpg",
+    imageAlt: "TORFADA Super Mix 40 Litre Genel Kullanım Bitki Toprağı",
     badge: "%100 ORGANİK",
     description: sharedDescription,
     features: sharedFeatures,
@@ -88,10 +87,8 @@ export const products: Product[] = [
     // Price not supplied yet — set this number and the purchase controls
     // switch on everywhere, with no layout changes needed.
     price: null,
-    // Packaging shot not supplied yet — drop the file in and set the path.
-    image: null,
-    imageAlt:
-      "TORFADA Super Mix 20 litre genel kullanım bitki toprağı ambalajı",
+    image: "/images/products/torfada-super-mix/torfada-super-mix-20l.png",
+    imageAlt: "TORFADA Super Mix 20 Litre Genel Kullanım Bitki Toprağı",
     badge: "%100 ORGANİK",
     description: sharedDescription,
     features: sharedFeatures,

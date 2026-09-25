@@ -31,13 +31,16 @@ export default function ProductImage({
       )}
     >
       {product.image ? (
+        /* `object-contain` keeps the whole bag visible — these are packaging
+           shots, so nothing may be cropped. Padding shrinks the content box,
+           which `contain` fits into, leaving an even margin around the bag. */
         <Image
           src={product.image}
           alt={product.imageAlt}
           fill
           sizes={sizes}
           priority={priority}
-          className="object-cover object-center"
+          className="object-contain object-center p-6 sm:p-8"
         />
       ) : (
         <div className="flex h-full flex-col items-center justify-center gap-3 p-6 text-center">
