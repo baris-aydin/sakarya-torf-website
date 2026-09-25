@@ -6,14 +6,18 @@ import CheckoutForm from "@/components/CheckoutForm";
 import Container from "@/components/Container";
 import OrderSummary from "@/components/OrderSummary";
 import { cx } from "@/lib/cx";
+import type { OrderItem } from "@/lib/products";
 
 const steps = ["1. Bilgiler", "2. Teslimat", "3. Ödeme"] as const;
 
 type CheckoutClientProps = {
+  /** The product being ordered — 40 L and 20 L are distinct items. */
+  item: OrderItem;
   initialQuantity: number;
 };
 
 export default function CheckoutClient({
+  item,
   initialQuantity,
 }: CheckoutClientProps) {
   const [quantity, setQuantity] = useState(initialQuantity);
@@ -77,11 +81,16 @@ export default function CheckoutClient({
                 </button>
               </section>
             ) : (
-              <CheckoutForm onSubmit={() => setActiveStep(3)} />
+              <CheckoutForm
+                productId={item.id}
+                quantity={quantity}
+                onSubmit={() => setActiveStep(3)}
+              />
             )}
 
             <div className="lg:sticky lg:top-28">
               <OrderSummary
+                item={item}
                 quantity={quantity}
                 onQuantityChange={setQuantity}
               />

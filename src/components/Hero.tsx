@@ -54,7 +54,7 @@ export default function Hero() {
                 <ArrowRight className="size-4" aria-hidden="true" />
               </Link>
               <Link
-                href="/#urun"
+                href="/#urunler"
                 className="inline-flex items-center justify-center rounded-md border border-white/55 px-8 py-3.5 text-base font-medium text-white transition-colors hover:bg-white/10"
               >
                 Ürünü İncele

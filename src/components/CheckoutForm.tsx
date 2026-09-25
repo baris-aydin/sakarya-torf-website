@@ -5,10 +5,16 @@ import Link from "next/link";
 import { TextAreaField, TextField } from "@/components/FormField";
 
 type CheckoutFormProps = {
+  productId: string;
+  quantity: number;
   onSubmit: () => void;
 };
 
-export default function CheckoutForm({ onSubmit }: CheckoutFormProps) {
+export default function CheckoutForm({
+  productId,
+  quantity,
+  onSubmit,
+}: CheckoutFormProps) {
   return (
     <section className="rounded-lg border border-line bg-white p-6 shadow-[0_1px_3px_rgba(18,61,42,0.05)] sm:p-8">
       <h2 className="text-[1.4rem] font-bold text-ink">
@@ -22,6 +28,10 @@ export default function CheckoutForm({ onSubmit }: CheckoutFormProps) {
           onSubmit();
         }}
       >
+        {/* Carries the selected SKU and quantity for when a backend is added. */}
+        <input type="hidden" name="urun" value={productId} readOnly />
+        <input type="hidden" name="adet" value={quantity} readOnly />
+
         <div className="grid gap-x-6 gap-y-5 sm:grid-cols-2">
           <TextField id="ad" label="Ad" autoComplete="given-name" required />
           <TextField

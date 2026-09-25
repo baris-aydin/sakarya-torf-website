@@ -1,24 +1,23 @@
 "use client";
 
 import Image from "next/image";
+import { Camera } from "lucide-react";
 import QuantitySelector from "@/components/QuantitySelector";
-import {
-  PRICE_PER_UNIT,
-  SHIPPING_COST,
-  formatPrice,
-  product,
-} from "@/lib/site";
+import type { OrderItem } from "@/lib/products";
+import { SHIPPING_COST, SHIPPING_LABEL, formatPrice } from "@/lib/site";
 
 type OrderSummaryProps = {
+  item: OrderItem;
   quantity: number;
   onQuantityChange: (value: number) => void;
 };
 
 export default function OrderSummary({
+  item,
   quantity,
   onQuantityChange,
 }: OrderSummaryProps) {
-  const subtotal = PRICE_PER_UNIT * quantity;
+  const subtotal = item.price * quantity;
   const total = subtotal + SHIPPING_COST;
 
   return (
@@ -27,19 +26,28 @@ export default function OrderSummary({
 
       <div className="mt-6 flex gap-4">
         <div className="relative size-20 shrink-0 overflow-hidden rounded-md bg-mist">
-          <Image
-            src={product.image}
-            alt={product.imageAlt}
-            fill
-            sizes="80px"
-            className="object-cover object-center"
-          />
+          {item.image ? (
+            <Image
+              src={item.image}
+              alt={item.imageAlt}
+              fill
+              sizes="80px"
+              className="object-cover object-center"
+            />
+          ) : (
+            <span
+              aria-hidden="true"
+              className="flex size-full items-center justify-center text-moss"
+            >
+              <Camera className="size-5" strokeWidth={1.6} />
+            </span>
+          )}
         </div>
         <div className="min-w-0">
-          <p className="text-[0.95rem] font-medium text-ink">{product.name}</p>
-          <p className="mt-0.5 text-[0.85rem] text-muted">{product.volume}</p>
+          <p className="text-[0.95rem] font-medium text-ink">{item.name}</p>
+          <p className="mt-0.5 text-[0.85rem] text-muted">{item.size}</p>
           <p className="mt-2 text-[0.95rem] font-semibold text-ink">
-            {product.price}
+            {formatPrice(item.price)}
           </p>
         </div>
       </div>
@@ -59,7 +67,7 @@ export default function OrderSummary({
         </div>
         <div className="flex items-center justify-between">
           <dt className="text-muted">Kargo</dt>
-          <dd className="font-medium text-moss">{product.shippingLabel}</dd>
+          <dd className="font-medium text-moss">{SHIPPING_LABEL}</dd>
         </div>
       </dl>
 

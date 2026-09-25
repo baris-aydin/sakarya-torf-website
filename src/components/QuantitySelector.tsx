@@ -8,6 +8,8 @@ type QuantitySelectorProps = {
   value: number;
   onChange: (value: number) => void;
   size?: "md" | "sm";
+  /** Used for products that cannot be ordered yet. */
+  disabled?: boolean;
   className?: string;
 };
 
@@ -15,6 +17,7 @@ export default function QuantitySelector({
   value,
   onChange,
   size = "md",
+  disabled = false,
   className,
 }: QuantitySelectorProps) {
   const dense = size === "sm";
@@ -31,13 +34,14 @@ export default function QuantitySelector({
       className={cx(
         "inline-flex items-center border border-line bg-white",
         shell,
+        disabled && "opacity-55",
         className,
       )}
     >
       <button
         type="button"
         onClick={() => onChange(Math.max(1, value - 1))}
-        disabled={value <= 1}
+        disabled={disabled || value <= 1}
         aria-label="Adedi azalt"
         className={cx(
           "flex h-full items-center justify-center text-ink transition-colors hover:bg-mist disabled:cursor-not-allowed disabled:text-ink/30 disabled:hover:bg-transparent",
@@ -61,7 +65,7 @@ export default function QuantitySelector({
       <button
         type="button"
         onClick={() => onChange(Math.min(MAX_QUANTITY, value + 1))}
-        disabled={value >= MAX_QUANTITY}
+        disabled={disabled || value >= MAX_QUANTITY}
         aria-label="Adedi artır"
         className={cx(
           "flex h-full items-center justify-center text-ink transition-colors hover:bg-mist disabled:cursor-not-allowed disabled:text-ink/30 disabled:hover:bg-transparent",
