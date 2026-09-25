@@ -34,7 +34,7 @@ export default function ProductDetailSection({
             priority={priority}
             showBadge
             className={cx(
-              "aspect-[5/6] rounded-xl ring-1 ring-line/70",
+              "aspect-[5/6] rounded-xl shadow-[0_1px_3px_rgba(18,61,42,0.05)] ring-1 ring-line/70",
               reverse && "lg:order-2",
             )}
           />

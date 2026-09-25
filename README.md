@@ -33,6 +33,7 @@ http://localhost:3000 adresini açın.
 | --- | --- |
 | `/` | Hero, Ürünlerimiz önizleme kartları, Neden Sakarya Torf?, Doğadan Gelen Verim, iletişim CTA |
 | `/urunler` | Her ürün için tam detay bölümü ve satın alma kontrolleri, ardından Galeri |
+| `/neden-sakarya-torf` | Yaklaşım, ürün özellikleri, özel karışım ve ürünlere CTA |
 | `/satin-al` | Sipariş formu ve sipariş özeti |
 | `/iletisim` | İletişim bilgileri ve mesaj formu |
 
@@ -50,6 +51,7 @@ src/
     icon.png            Tarayıcı sekmesi ikonu (Next.js icon dosya kuralı)
     page.tsx            Ana sayfa
     urunler/page.tsx    Ürünler sayfası (ürün detayları + galeri)
+    neden-sakarya-torf/page.tsx  Neden Sakarya Torf? sayfası
     satin-al/page.tsx   Ödeme sayfası (searchParams okur)
     iletisim/page.tsx   İletişim sayfası
   components/           Paylaşılan arayüz bileşenleri
@@ -124,7 +126,7 @@ Bölüm üstü küçük etiketler için `.eyebrow` sınıfı kullanılır. Bu me
 
 `image: null` da desteklenir; görseli olmayan bir ürün için yuva yer tutucu gösterir.
 
-Ambalaj fotoğrafları `object-contain` ile gösterilir — paketin hiçbir kısmı kırpılmaz. Torbalar beyaz zeminli olduğu için çerçeve soluk yeşil (`bg-mist`) kalır; bu ayrım olmadan beyaz ambalaj krem sayfa zeminine karışır.
+Ambalaj fotoğrafları `object-contain` ile gösterilir — paketin hiçbir kısmı kırpılmaz. Ürün görsel çerçeveleri **beyazdır** (`bg-white`); krem sayfadan ayrışma ince kenarlık/`ring` ve hafif gölge ile sağlanır, yeşil tint kullanılmaz. Galeri kartları ve ödeme sayfasındaki küçük ürün görseli bu değişikliğin dışındadır, soluk yeşil (`bg-mist`) zeminlerini korur.
 
 Kargo `src/lib/site.ts` içinde: `SHIPPING_COST = 0` ve `SHIPPING_LABEL = "Ücretsiz"`. `OrderSummary` ara toplamı `ürün fiyatı × adet` olarak hesaplar; toplam ara toplama eşittir.
 

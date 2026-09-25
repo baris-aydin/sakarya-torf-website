@@ -25,8 +25,10 @@ export default function ProductImage({
 }: ProductImageProps) {
   return (
     <div
+      /* White, not a green tint: the packaging is white, so separation from
+         the cream page comes from the caller's border/ring instead. */
       className={cx(
-        "relative w-full overflow-hidden bg-mist",
+        "relative w-full overflow-hidden bg-white",
         className,
       )}
     >

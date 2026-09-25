@@ -95,6 +95,16 @@ export const products: Product[] = [
   },
 ];
 
+/**
+ * Special mixture printed on the TORFADA Super Mix packaging. Identical on
+ * both pack sizes — no figures here are inferred.
+ */
+export const productMixture = [
+  { share: "%65", label: "İthal Torf" },
+  { share: "%20", label: "Cocopeat" },
+  { share: "%15", label: "Woodfiber" },
+] as const;
+
 export type PurchasableProduct = Product & { price: number };
 
 export function isPurchasable(product: Product): product is PurchasableProduct {

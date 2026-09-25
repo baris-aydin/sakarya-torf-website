@@ -1,25 +1,10 @@
-import { HeartHandshake, Leaf, Sprout } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import Container from "@/components/Container";
 import { cx } from "@/lib/cx";
+import { whyCards } from "@/lib/why";
 
-const cards = [
-  {
-    title: "Kaliteye Önem Veriyoruz",
-    body: "Ürünlerimizi bitkilerinizin sağlıklı gelişimini destekleyecek şekilde özenle hazırlıyoruz.",
-    Icon: Sprout,
-  },
-  {
-    title: "Doğal İçerik",
-    body: "Bitkileriniz için doğal ve güvenilir bir yetişme ortamı sunmayı hedefliyoruz.",
-    Icon: Leaf,
-  },
-  {
-    title: "Müşteri Memnuniyeti",
-    body: "Her aşamada ulaşılabilir olmaya önem veriyoruz.",
-    Icon: HeartHandshake,
-  },
-];
-
+/** Short teaser only — the full content lives on /neden-sakarya-torf. */
 export default function WhySakaryaTorf() {
   return (
     <section
@@ -28,11 +13,16 @@ export default function WhySakaryaTorf() {
     >
       <Container>
         <h2 className="text-[clamp(2rem,4vw,2.9rem)] leading-tight font-bold text-ink">
-          Neden Sakarya Torf?
+          <Link
+            href="/neden-sakarya-torf"
+            className="transition-colors hover:text-moss"
+          >
+            Neden Sakarya Torf?
+          </Link>
         </h2>
 
         <ul className="mt-12 grid gap-6 sm:grid-cols-2 lg:mt-14 lg:grid-cols-3">
-          {cards.map(({ title, body, Icon }, index) => (
+          {whyCards.map(({ title, body, Icon }, index) => (
             <li
               key={title}
               className={cx(
@@ -41,8 +31,11 @@ export default function WhySakaryaTorf() {
                 index === 2 && "sm:col-span-2 lg:col-span-1",
               )}
             >
-              <span className="flex size-11 items-center justify-center rounded-md bg-forest text-cream">
-                <Icon className="size-5" strokeWidth={1.7} aria-hidden="true" />
+              <span
+                aria-hidden="true"
+                className="flex size-11 items-center justify-center rounded-md bg-forest text-cream"
+              >
+                <Icon className="size-5" strokeWidth={1.7} />
               </span>
               <h3 className="mt-6 font-sans text-[1.05rem] font-semibold text-ink">
                 {title}
@@ -53,6 +46,14 @@ export default function WhySakaryaTorf() {
             </li>
           ))}
         </ul>
+
+        <Link
+          href="/neden-sakarya-torf"
+          className="mt-10 inline-flex items-center gap-2 text-[0.95rem] font-medium text-moss transition-colors hover:text-moss-dark"
+        >
+          Daha Fazla Bilgi
+          <ArrowRight className="size-4" aria-hidden="true" />
+        </Link>
       </Container>
     </section>
   );

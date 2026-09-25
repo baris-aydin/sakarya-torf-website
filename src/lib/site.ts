@@ -18,7 +18,7 @@ export const site = {
 export const navLinks = [
   { label: "Ana Sayfa", href: "/" },
   { label: "Ürünler", href: "/urunler" },
-  { label: "Neden Sakarya Torf?", href: "/#neden-sakarya-torf" },
+  { label: "Neden Sakarya Torf?", href: "/neden-sakarya-torf" },
   { label: "İletişim", href: "/iletisim" },
 ] as const;
 
