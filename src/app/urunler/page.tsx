@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Container from "@/components/Container";
-import Gallery from "@/components/Gallery";
 import ProductDetailSection from "@/components/ProductDetailSection";
 import { products } from "@/lib/products";
 
@@ -35,8 +34,6 @@ export default function Page() {
           className={index > 0 ? "border-t border-line" : undefined}
         />
       ))}
-
-      <Gallery />
     </>
   );
 }

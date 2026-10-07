@@ -32,7 +32,8 @@ http://localhost:3000 adresini açın.
 | Rota | İçerik |
 | --- | --- |
 | `/` | Hero, Ürünlerimiz önizleme kartları, Neden Sakarya Torf?, Doğadan Gelen Verim, iletişim CTA |
-| `/urunler` | Her ürün için tam detay bölümü ve satın alma kontrolleri, ardından Galeri |
+| `/urunler` | Her ürün için tam detay bölümü ve satın alma kontrolleri — yalnızca ürün içeriği |
+| `/galeri` | Fotoğraflar ve Videolar bölümleri, tıklanınca açılan görüntüleyici |
 | `/neden-sakarya-torf` | Yaklaşım, ürün özellikleri, özel karışım ve ürünlere CTA |
 | `/satin-al` | Sipariş formu ve sipariş özeti |
 | `/iletisim` | İletişim bilgileri ve mesaj formu |
@@ -50,7 +51,8 @@ src/
     globals.css         Tailwind v4 @theme tokenleri ve temel stiller
     icon.png            Tarayıcı sekmesi ikonu (Next.js icon dosya kuralı)
     page.tsx            Ana sayfa
-    urunler/page.tsx    Ürünler sayfası (ürün detayları + galeri)
+    urunler/page.tsx    Ürünler sayfası (ürün detayları)
+    galeri/page.tsx     Galeri sayfası (Fotoğraflar + Videolar)
     neden-sakarya-torf/page.tsx  Neden Sakarya Torf? sayfası
     satin-al/page.tsx   Ödeme sayfası (searchParams okur)
     iletisim/page.tsx   İletişim sayfası
@@ -82,7 +84,10 @@ Her iki ürün de aynı bileşenlerden render edilir; JSX kopyalanmaz.
 | `ProductImage` | Görsel yuvası; görsel yoksa yer tutucu gösterir |
 | `ProductFeatures` | Özellik ızgarası |
 | `ProductPurchase` | Fiyat, adet seçici ve Satın Al düğmesi |
-| `Gallery` / `GalleryCard` | `galleryItems` dizisinden beslenen galeri |
+| `GallerySection` | Başlık, kart ızgarası ve görüntüleyici; boş kategoriyi gizler |
+| `PhotoGallery` / `VideoGallery` | `GallerySection` üzerine ince sarmalayıcılar |
+| `GalleryCard` | Küçük görsel (tıklanınca açılır), alt yazı, Instagram bağlantısı |
+| `GalleryLightbox` | Yerel `<dialog>` tabanlı büyük görüntüleyici |
 
 ## Tasarım sistemi
 
@@ -126,7 +131,7 @@ Bölüm üstü küçük etiketler için `.eyebrow` sınıfı kullanılır. Bu me
 
 `image: null` da desteklenir; görseli olmayan bir ürün için yuva yer tutucu gösterir.
 
-Ambalaj fotoğrafları `object-contain` ile gösterilir — paketin hiçbir kısmı kırpılmaz. Ürün görsel çerçeveleri **beyazdır** (`bg-white`); krem sayfadan ayrışma ince kenarlık/`ring` ve hafif gölge ile sağlanır, yeşil tint kullanılmaz. Galeri kartları ve ödeme sayfasındaki küçük ürün görseli bu değişikliğin dışındadır, soluk yeşil (`bg-mist`) zeminlerini korur.
+Ambalaj fotoğrafları `object-contain` ile gösterilir — paketin hiçbir kısmı kırpılmaz. Ürün görsel çerçeveleri **beyazdır** (`bg-white`); krem sayfadan ayrışma ince kenarlık/`ring` ve hafif gölge ile sağlanır, yeşil tint kullanılmaz. Ödeme sayfasındaki küçük ürün görseli bu değişikliğin dışındadır, soluk yeşil (`bg-mist`) zeminini korur.
 
 Kargo `src/lib/site.ts` içinde: `SHIPPING_COST = 0` ve `SHIPPING_LABEL = "Ücretsiz"`. `OrderSummary` ara toplamı `ürün fiyatı × adet` olarak hesaplar; toplam ara toplama eşittir.
 
@@ -136,7 +141,7 @@ Kargo `src/lib/site.ts` içinde: `SHIPPING_COST = 0` ve `SHIPPING_LABEL = "Ücre
 
 ## Galeri
 
-`/urunler` sayfasının altındaki galeri, Sakarya Torf Instagram hesabından seçilmiş **8 gönderiden** oluşur (5 görsel, 3 video). Gönderiler elle seçilmiştir; otomatik senkronizasyon yoktur.
+`/galeri` sayfasındaki galeri, Sakarya Torf Instagram hesabından seçilmiş **8 gönderiden** oluşur (5 görsel, 3 video). Gönderiler elle seçilmiştir; otomatik senkronizasyon yoktur.
 
 **Instagram gömme kullanılmaz ve çalışma anında Instagram CDN'ine istek atılmaz.** Tüm medya `public/media/gallery/` altından, kendi sunucumuzdan servis edilir — Instagram CDN adresleri imzalıdır ve süresi dolar.
 
@@ -159,10 +164,12 @@ Dosya adları Instagram shortcode'udur: `<shortCode>.jpg`, video için `<shortCo
 
 Alt yazılar JSON'dan **birebir** aktarılır; emoji, hashtag, telefon numarası, satır sonları ve Türkçe karakterler korunur. `likesCount`, `commentsCount`, `ownerId` gibi alanlar frontend verisine taşınmaz.
 
-- Medya alanı her kartta `aspect-[4/5]` ve `object-contain` — gönderilerin en boy oranları 0,56 ile 1,88 arasında değişiyor, hiçbiri kırpılmıyor.
+- Sayfa `type` alanına göre ikiye ayrılır: `image` → **Fotoğraflar**, `video` → **Videolar**. Bir kategori boşsa bölüm hiç gösterilmez.
+- Kart küçük görselleri tutarlı ızgara için `aspect-[4/5]` + `object-cover` kullanır; bu yüzden yatay gönderiler (ör. `Cnr0q5et458`, 1,88) ızgarada kırpılır. Tıklanınca açılan görüntüleyici medyayı **kırpmadan** (`object-contain`) tam alt yazıyla gösterir.
+- Görüntüleyici yerel `<dialog>` öğesidir: odak tuzağı, Esc ile kapanma ve arka plan tarayıcıdan gelir; ek bağımlılık yoktur. Arka plana tıklamak da kapatır.
 - Alt yazılar 4 satırda `line-clamp` ile kesilir; taşma varsa **Devamını Oku** / **Daha Az Göster** düğmesi çıkar (taşma istemcide ölçülür, kısa alt yazılarda düğme görünmez).
-- Videolar `controls` + `playsInline` + `preload="metadata"` ile gelir; otomatik oynatma yoktur. MP4'lerde `moov` atomu `mdat`'tan önce (faststart), yani baştan indirilmeden oynamaya başlar.
-- Galeri sayfanın altında olduğu için görseller `priority` almaz, tembel yüklenir.
+- Video kartlarında yalnızca kapak görseli ve oynat düğmesi vardır; sayfa yüklenirken hiçbir `<video>` öğesi oluşturulmaz. Video, kullanıcı oynat düğmesine bastığında görüntüleyicide açılır ve başlar; `autoplay` kullanılmaz. MP4'lerde `moov` atomu `mdat`'tan önce (faststart), yani baştan indirilmeden oynamaya başlar.
+- Galeri görselleri `priority` almaz, tembel yüklenir.
 
 ## Marka görselleri
 

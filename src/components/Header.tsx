@@ -42,7 +42,7 @@ export default function Header() {
                 href={link.href}
                 aria-current={isActive(link.href) ? "page" : undefined}
                 className={cx(
-                  "text-[0.95rem] transition-colors hover:text-moss",
+                  "text-[0.95rem] whitespace-nowrap transition-colors hover:text-moss",
                   isActive(link.href)
                     ? "font-medium text-moss"
                     : "text-ink/75",
