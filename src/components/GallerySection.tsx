@@ -5,7 +5,7 @@ import Container from "@/components/Container";
 import GalleryCard from "@/components/GalleryCard";
 import GalleryLightbox from "@/components/GalleryLightbox";
 import { cx } from "@/lib/cx";
-import type { GalleryItem } from "@/lib/gallery";
+import type { GalleryItem } from "@/lib/gallery-types";
 
 type GallerySectionProps = {
   id: string;

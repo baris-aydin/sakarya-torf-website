@@ -1,5 +1,5 @@
 import GallerySection from "@/components/GallerySection";
-import type { GalleryImage } from "@/lib/gallery";
+import type { GalleryImage } from "@/lib/gallery-types";
 
 export default function PhotoGallery({ items }: { items: GalleryImage[] }) {
   return (

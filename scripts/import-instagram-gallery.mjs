@@ -5,7 +5,7 @@
  *   node scripts/import-instagram-gallery.mjs [--force]
  *
  * Reads the Apify export in the project root, downloads every asset into
- * public/media/gallery/, and regenerates src/lib/gallery.ts.
+ * public/media/gallery/, and regenerates src/lib/instagram-gallery.ts.
  *
  * Instagram CDN URLs are signed and expire, so the site must never link to
  * them at runtime — this script is what makes the media local. It is safe to
@@ -20,7 +20,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const SOURCE = path.join(ROOT, "sakarya-torf-instagram-gallery.json");
 const MEDIA_DIR = path.join(ROOT, "public", "media", "gallery");
 const PUBLIC_PREFIX = "/media/gallery";
-const OUT_FILE = path.join(ROOT, "src", "lib", "gallery.ts");
+const OUT_FILE = path.join(ROOT, "src", "lib", "instagram-gallery.ts");
 
 const FORCE = process.argv.includes("--force");
 
@@ -117,6 +117,7 @@ function renderGalleryModule(items) {
     .map((item) => {
       const lines = [
         `    id: ${tsString(item.id)},`,
+        `    source: "instagram",`,
         `    type: ${tsString(item.type)},`,
         `    src: ${tsString(item.src)},`,
       ];
@@ -136,34 +137,12 @@ function renderGalleryModule(items) {
 // Regenerate with: node scripts/import-instagram-gallery.mjs
 // Source: sakarya-torf-instagram-gallery.json (import-time only, never fetched
 // by the browser). All media is served from our own /public.
+// Types live in gallery-types.ts; non-Instagram media is in local-gallery.ts.
 
-type GalleryItemBase = {
-  /** Instagram shortcode, used as the stable key and the local filename. */
-  id: string;
-  /** Original caption, preserved verbatim. */
-  caption: string;
-  instagramUrl: string;
-  /** ISO date (YYYY-MM-DD) of the original post. */
-  date: string;
-  width: number;
-  height: number;
-};
-
-export type GalleryImage = GalleryItemBase & {
-  type: "image";
-  src: string;
-};
-
-export type GalleryVideo = GalleryItemBase & {
-  type: "video";
-  src: string;
-  poster: string;
-};
-
-export type GalleryItem = GalleryImage | GalleryVideo;
+import type { InstagramGalleryItem } from "@/lib/gallery-types";
 
 /** Curated order, matching the source export. Never sorted at render time. */
-export const galleryItems: GalleryItem[] = [
+export const instagramGalleryItems: InstagramGalleryItem[] = [
 ${entries}
 ];
 `;

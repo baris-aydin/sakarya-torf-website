@@ -2,36 +2,15 @@
 // Regenerate with: node scripts/import-instagram-gallery.mjs
 // Source: sakarya-torf-instagram-gallery.json (import-time only, never fetched
 // by the browser). All media is served from our own /public.
+// Types live in gallery-types.ts; non-Instagram media is in local-gallery.ts.
 
-type GalleryItemBase = {
-  /** Instagram shortcode, used as the stable key and the local filename. */
-  id: string;
-  /** Original caption, preserved verbatim. */
-  caption: string;
-  instagramUrl: string;
-  /** ISO date (YYYY-MM-DD) of the original post. */
-  date: string;
-  width: number;
-  height: number;
-};
-
-export type GalleryImage = GalleryItemBase & {
-  type: "image";
-  src: string;
-};
-
-export type GalleryVideo = GalleryItemBase & {
-  type: "video";
-  src: string;
-  poster: string;
-};
-
-export type GalleryItem = GalleryImage | GalleryVideo;
+import type { InstagramGalleryItem } from "@/lib/gallery-types";
 
 /** Curated order, matching the source export. Never sorted at render time. */
-export const galleryItems: GalleryItem[] = [
+export const instagramGalleryItems: InstagramGalleryItem[] = [
   {
     id: "C6MZDYtNUSA",
+    source: "instagram",
     type: "image",
     src: "/media/gallery/C6MZDYtNUSA.jpg",
     width: 1289,
@@ -42,6 +21,7 @@ export const galleryItems: GalleryItem[] = [
   },
   {
     id: "Co0AjOHtySR",
+    source: "instagram",
     type: "image",
     src: "/media/gallery/Co0AjOHtySR.jpg",
     width: 1440,
@@ -52,6 +32,7 @@ export const galleryItems: GalleryItem[] = [
   },
   {
     id: "DbnwxhENr_d",
+    source: "instagram",
     type: "video",
     src: "/media/gallery/DbnwxhENr_d.mp4",
     poster: "/media/gallery/DbnwxhENr_d-cover.jpg",
@@ -63,6 +44,7 @@ export const galleryItems: GalleryItem[] = [
   },
   {
     id: "Cwmfoz0NSEE",
+    source: "instagram",
     type: "video",
     src: "/media/gallery/Cwmfoz0NSEE.mp4",
     poster: "/media/gallery/Cwmfoz0NSEE-cover.jpg",
@@ -74,6 +56,7 @@ export const galleryItems: GalleryItem[] = [
   },
   {
     id: "DObaJF8AqZP",
+    source: "instagram",
     type: "video",
     src: "/media/gallery/DObaJF8AqZP.mp4",
     poster: "/media/gallery/DObaJF8AqZP-cover.jpg",
@@ -85,6 +68,7 @@ export const galleryItems: GalleryItem[] = [
   },
   {
     id: "CpqPZUit9ji",
+    source: "instagram",
     type: "image",
     src: "/media/gallery/CpqPZUit9ji.jpg",
     width: 884,
@@ -95,6 +79,7 @@ export const galleryItems: GalleryItem[] = [
   },
   {
     id: "Cnr0q5et458",
+    source: "instagram",
     type: "image",
     src: "/media/gallery/Cnr0q5et458.jpg",
     width: 828,
@@ -105,6 +90,7 @@ export const galleryItems: GalleryItem[] = [
   },
   {
     id: "CiqA1NJNqdV",
+    source: "instagram",
     type: "image",
     src: "/media/gallery/CiqA1NJNqdV.jpg",
     width: 899,

@@ -1,5 +1,5 @@
 import GallerySection from "@/components/GallerySection";
-import type { GalleryVideo } from "@/lib/gallery";
+import type { GalleryVideo } from "@/lib/gallery-types";
 
 /** Renders nothing when there are no videos, so the page stays clean. */
 export default function VideoGallery({ items }: { items: GalleryVideo[] }) {

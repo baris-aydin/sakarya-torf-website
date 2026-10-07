@@ -2,11 +2,9 @@ import type { Metadata } from "next";
 import Container from "@/components/Container";
 import PhotoGallery from "@/components/PhotoGallery";
 import VideoGallery from "@/components/VideoGallery";
-import {
-  galleryItems,
-  type GalleryImage,
-  type GalleryVideo,
-} from "@/lib/gallery";
+import type { GalleryImage, GalleryVideo } from "@/lib/gallery-types";
+import { instagramGalleryItems } from "@/lib/instagram-gallery";
+import { localGalleryItems } from "@/lib/local-gallery";
 
 export const metadata: Metadata = {
   title: "Galeri",
@@ -14,7 +12,10 @@ export const metadata: Metadata = {
     "Sakarya Torf ürünlerini, kullanım alanlarını, uygulama örneklerini, fotoğrafları ve videoları keşfedin.",
 };
 
-// Split once on the server; the curated order within each type is preserved.
+// Our own media leads each section, then the Instagram posts. Split once on
+// the server; the order within each source is preserved.
+const galleryItems = [...localGalleryItems, ...instagramGalleryItems];
+
 const photos = galleryItems.filter(
   (item): item is GalleryImage => item.type === "image",
 );

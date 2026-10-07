@@ -36,6 +36,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# original phone exports — the site plays the lossless .mp4 remux beside each
+/public/images/gallery/videos/*.mov
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

@@ -59,7 +59,9 @@ src/
   components/           Paylaşılan arayüz bileşenleri
   lib/
     products.ts         Ürün verisi ve tipleri — tek kaynak
-    gallery.ts          Galeri verisi (ÜRETİLEN — betikle yenilenir)
+    gallery-types.ts    Galeri tipleri (Instagram ve yerel medya ortak)
+    instagram-gallery.ts  Instagram galeri verisi (ÜRETİLEN — betikle yenilenir)
+    local-gallery.ts    Kendi fotoğraf/videolarımız (elle düzenlenir)
     site.ts             Site geneli ayarlar, kargo, fiyat biçimlendirme
     cx.ts               className birleştirme yardımcısı
 public/
@@ -67,10 +69,13 @@ public/
     brand/              Logo, amblem, kırsal görsel
     hero/               Hero arka planı
     products/           TORFADA ambalaj görselleri (ürün başına klasör)
+    gallery/
+      photos/           Kendi galeri fotoğraflarımız (Instagram dışı)
+      videos/           Kendi galeri videolarımız: .mp4 + -poster.jpg
   media/
     gallery/            Instagram'dan indirilen galeri medyası (yerel)
 scripts/
-  import-instagram-gallery.mjs   Galeri medyasını indirir, gallery.ts üretir
+  import-instagram-gallery.mjs   Instagram medyasını indirir, instagram-gallery.ts üretir
 ```
 
 ### Ürün bileşenleri
@@ -86,7 +91,7 @@ Her iki ürün de aynı bileşenlerden render edilir; JSX kopyalanmaz.
 | `ProductPurchase` | Fiyat, adet seçici ve Satın Al düğmesi |
 | `GallerySection` | Başlık, kart ızgarası ve görüntüleyici; boş kategoriyi gizler |
 | `PhotoGallery` / `VideoGallery` | `GallerySection` üzerine ince sarmalayıcılar |
-| `GalleryCard` | Küçük görsel (tıklanınca açılır), alt yazı, Instagram bağlantısı |
+| `GalleryCard` | Küçük görsel (tıklanınca açılır); Instagram öğelerinde alt yazı ve bağlantı |
 | `GalleryLightbox` | Yerel `<dialog>` tabanlı büyük görüntüleyici |
 
 ## Tasarım sistemi
@@ -141,11 +146,31 @@ Kargo `src/lib/site.ts` içinde: `SHIPPING_COST = 0` ve `SHIPPING_LABEL = "Ücre
 
 ## Galeri
 
-`/galeri` sayfasındaki galeri, Sakarya Torf Instagram hesabından seçilmiş **8 gönderiden** oluşur (5 görsel, 3 video). Gönderiler elle seçilmiştir; otomatik senkronizasyon yoktur.
+`/galeri` sayfası iki kaynaktan beslenir; her öğenin `source` alanı hangisi olduğunu belirtir:
 
-**Instagram gömme kullanılmaz ve çalışma anında Instagram CDN'ine istek atılmaz.** Tüm medya `public/media/gallery/` altından, kendi sunucumuzdan servis edilir — Instagram CDN adresleri imzalıdır ve süresi dolar.
+| Kaynak | Veri | Medya | İçerik |
+| --- | --- | --- | --- |
+| `local` | `src/lib/local-gallery.ts` (elle) | `public/images/gallery/` | 6 fotoğraf, 5 video |
+| `instagram` | `src/lib/instagram-gallery.ts` (üretilen) | `public/media/gallery/` | 8 gönderi (5 görsel, 3 video) |
 
-### İçeriği yenilemek
+Her bölümde önce yerel medya, ardından Instagram gönderileri gelir. Yerel öğeler Instagram gönderisi **değildir**: alt yazıları ve "Instagram'da Görüntüle" bağlantıları yoktur, kartları yalnızca küçük görselden oluşur ve görüntüleyicide alt yazı paneli olmadan, medyaya göre boyutlanarak açılır.
+
+### Yerel medya eklemek
+
+1. Fotoğrafı `public/images/gallery/photos/` altına koyun.
+2. Video için tarayıcıda oynayan bir `.mp4` (H.264/AAC) ve bir kapak karesi gerekir. Telefondan gelen `.mov` dosyaları Firefox'ta oynamaz (`video/quicktime` olarak servis edilir); yeniden kodlamadan `.mp4`'e aktarılır:
+
+   ```bash
+   ffmpeg -i video-06.mov -c copy -movflags +faststart -map_metadata -1 video-06.mp4
+   ffmpeg -ss 1 -i video-06.mov -frames:v 1 -q:v 3 video-06-poster.jpg
+   ```
+
+   Orijinal `.mov` dosyaları `.gitignore` ile depo dışında tutulur.
+3. `src/lib/local-gallery.ts` dizisine `width`/`height` değerleriyle bir kayıt ekleyin.
+
+### Instagram içeriğini yenilemek
+
+**Instagram gömme kullanılmaz ve çalışma anında Instagram CDN'ine istek atılmaz.** Instagram medyası `public/media/gallery/` altından, kendi sunucumuzdan servis edilir — Instagram CDN adresleri imzalıdır ve süresi dolar. Gönderiler elle seçilmiştir; otomatik senkronizasyon yoktur.
 
 Kaynak veri, proje kökündeki `sakarya-torf-instagram-gallery.json` dosyasıdır (Apify dışa aktarımı). `public/` altında olmadığı için tarayıcıya servis edilmez.
 
@@ -154,21 +179,21 @@ node scripts/import-instagram-gallery.mjs          # eksik dosyaları indirir
 node scripts/import-instagram-gallery.mjs --force  # hepsini yeniden indirir
 ```
 
-Betik her varlığı indirir, sihirli baytlarından doğrular (HTML hata sayfası veya bozuk dosya diske yazılmaz) ve `src/lib/gallery.ts` dosyasını **yeniden üretir**. Tekrar çalıştırmak güvenlidir: geçerli dosyalar atlanır. Herhangi bir indirme başarısız olursa veri dosyası yazılmaz ve hangi shortcode'un başarısız olduğu bildirilir.
+Betik her varlığı indirir, sihirli baytlarından doğrular (HTML hata sayfası veya bozuk dosya diske yazılmaz) ve `src/lib/instagram-gallery.ts` dosyasını **yeniden üretir**. Tekrar çalıştırmak güvenlidir: geçerli dosyalar atlanır. Herhangi bir indirme başarısız olursa veri dosyası yazılmaz ve hangi shortcode'un başarısız olduğu bildirilir.
 
-`src/lib/gallery.ts` üretilen bir dosyadır — elle düzenlemeyin.
+`src/lib/instagram-gallery.ts` üretilen bir dosyadır — elle düzenlemeyin. Tipler `src/lib/gallery-types.ts` içindedir.
 
 Dosya adları Instagram shortcode'udur: `<shortCode>.jpg`, video için `<shortCode>.mp4` + `<shortCode>-cover.jpg`.
 
 ### Veri ve davranış
 
-Alt yazılar JSON'dan **birebir** aktarılır; emoji, hashtag, telefon numarası, satır sonları ve Türkçe karakterler korunur. `likesCount`, `commentsCount`, `ownerId` gibi alanlar frontend verisine taşınmaz.
+Instagram alt yazıları JSON'dan **birebir** aktarılır; emoji, hashtag, telefon numarası, satır sonları ve Türkçe karakterler korunur. `likesCount`, `commentsCount`, `ownerId` gibi alanlar frontend verisine taşınmaz.
 
 - Sayfa `type` alanına göre ikiye ayrılır: `image` → **Fotoğraflar**, `video` → **Videolar**. Bir kategori boşsa bölüm hiç gösterilmez.
 - Kart küçük görselleri tutarlı ızgara için `aspect-[4/5]` + `object-cover` kullanır; bu yüzden yatay gönderiler (ör. `Cnr0q5et458`, 1,88) ızgarada kırpılır. Tıklanınca açılan görüntüleyici medyayı **kırpmadan** (`object-contain`) tam alt yazıyla gösterir.
 - Görüntüleyici yerel `<dialog>` öğesidir: odak tuzağı, Esc ile kapanma ve arka plan tarayıcıdan gelir; ek bağımlılık yoktur. Arka plana tıklamak da kapatır.
-- Alt yazılar 4 satırda `line-clamp` ile kesilir; taşma varsa **Devamını Oku** / **Daha Az Göster** düğmesi çıkar (taşma istemcide ölçülür, kısa alt yazılarda düğme görünmez).
-- Video kartlarında yalnızca kapak görseli ve oynat düğmesi vardır; sayfa yüklenirken hiçbir `<video>` öğesi oluşturulmaz. Video, kullanıcı oynat düğmesine bastığında görüntüleyicide açılır ve başlar; `autoplay` kullanılmaz. MP4'lerde `moov` atomu `mdat`'tan önce (faststart), yani baştan indirilmeden oynamaya başlar.
+- Instagram alt yazıları 4 satırda `line-clamp` ile kesilir; taşma varsa **Devamını Oku** / **Daha Az Göster** düğmesi çıkar (taşma istemcide ölçülür, kısa alt yazılarda düğme görünmez).
+- Video kartlarında yalnızca kapak görseli ve oynat düğmesi vardır; sayfa yüklenirken hiçbir `<video>` öğesi oluşturulmaz. Video, kullanıcı oynat düğmesine bastığında görüntüleyicide açılır ve başlar; `autoplay` kullanılmaz. Tüm MP4'lerde `moov` atomu `mdat`'tan önce (faststart), yani baştan indirilmeden oynamaya başlar.
 - Galeri görselleri `priority` almaz, tembel yüklenir.
 
 ## Marka görselleri
