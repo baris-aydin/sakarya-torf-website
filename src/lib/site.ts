@@ -15,13 +15,26 @@ export const site = {
   },
 } as const;
 
-export const navLinks = [
+export type NavItem = { label: string; href: string };
+
+/** A top-level link; `children` turns it into a dropdown (desktop) or an expandable group (mobile). */
+export type NavLink = NavItem & { children?: readonly NavItem[] };
+
+export const navLinks: readonly NavLink[] = [
   { label: "Ana Sayfa", href: "/" },
   { label: "Ürünler", href: "/urunler" },
-  { label: "Galeri", href: "/galeri" },
+  {
+    label: "Galeri",
+    href: "/galeri",
+    // Sections of /galeri, not separate pages.
+    children: [
+      { label: "Fotoğraflar", href: "/galeri#fotograflar" },
+      { label: "Videolar", href: "/galeri#videolar" },
+    ],
+  },
   { label: "Neden Sakarya Torf?", href: "/neden-sakarya-torf" },
   { label: "İletişim", href: "/iletisim" },
-] as const;
+];
 
 export const footerPageLinks = [
   { label: "Ana Sayfa", href: "/" },

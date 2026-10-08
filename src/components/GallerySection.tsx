@@ -28,11 +28,14 @@ export default function GallerySection({
     return null;
   }
 
+  // Target of /galeri#fotograflar and #videolar. The global scroll-padding-top
+  // (6rem) already clears the 4.75rem sticky header; -1.25rem brings the
+  // section's top edge flush with the header instead of a strip below it.
   return (
     <section
       id={id}
       aria-labelledby={`${id}-baslik`}
-      className={cx("scroll-mt-24 py-16 lg:py-24", className)}
+      className={cx("-scroll-mt-5 py-16 lg:py-24", className)}
     >
       <Container>
         <h2

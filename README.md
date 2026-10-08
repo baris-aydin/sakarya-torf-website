@@ -33,12 +33,14 @@ http://localhost:3000 adresini açın.
 | --- | --- |
 | `/` | Hero, Ürünlerimiz önizleme kartları, Neden Sakarya Torf?, Doğadan Gelen Verim, iletişim CTA |
 | `/urunler` | Her ürün için tam detay bölümü ve satın alma kontrolleri — yalnızca ürün içeriği |
-| `/galeri` | Fotoğraflar ve Videolar bölümleri, tıklanınca açılan görüntüleyici |
+| `/galeri` | Fotoğraflar (`#fotograflar`) ve Videolar (`#videolar`) bölümleri, tıklanınca açılan görüntüleyici |
 | `/neden-sakarya-torf` | Yaklaşım, ürün özellikleri, özel karışım ve ürünlere CTA |
 | `/satin-al` | Sipariş formu ve sipariş özeti |
 | `/iletisim` | İletişim bilgileri ve mesaj formu |
 
 Bilgi mimarisi şöyle ayrılır: **ana sayfa ürün keşfi**, **`/urunler` ise detay ve satın alma**. Önizleme kartları `/urunler#40-litre` ve `/urunler#20-litre` bağlantılarıyla ilgili bölüme kaydırır.
+
+Üst menü `src/lib/site.ts` içindeki `navLinks` dizisinden üretilir. `children` alanı olan bir bağlantı (şu an yalnızca Galeri) masaüstünde açılır menü, mobilde açılıp kapanan bir grup olur. Etiketin kendisi her zaman sayfaya gider; alt menü masaüstünde üzerine gelince, klavye ve dokunmatik için ise yanındaki ok düğmesiyle açılır (`NavDropdown`). Fotoğraflar ve Videolar ayrı sayfa değildir, `/galeri` üzerindeki bölümlere bağlanır.
 
 `/satin-al` sayfası `?product=` ve `?quantity=` parametrelerini okur — örneğin `/satin-al?product=40-litre&quantity=3`. İstenen ürün bulunamazsa veya fiyatı henüz yoksa, fiyatı tanımlı ilk ürüne düşer.
 
